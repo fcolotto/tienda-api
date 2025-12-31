@@ -31,6 +31,53 @@ async function fetchProducts() {
   return response.json();
 }
 
+async function fetchOrder(orderId) {
+  const storeId = process.env.TN_STORE_ID;
+  const accessToken = process.env.TN_ACCESS_TOKEN;
+  const userAgent = process.env.TN_USER_AGENT;
+
+  if (!storeId || !accessToken || !userAgent) {
+    const error = new Error("Tienda Nube credentials are not configured");
+    error.statusCode = 500;
+    error.code = "tn_not_configured";
+    throw error;
+  }
+
+  const encodedId = encodeURIComponent(orderId);
+  const url = `${BASE_URL}/${storeId}/orders/${encodedId}`;
+
+  const response = await fetch(url, {
+    headers: {
+      "Authentication": `bearer ${accessToken}`,
+      "User-Agent": userAgent
+    }
+  });
+
+  if (response.status === 401 || response.status === 403) {
+    const error = new Error("Tienda Nube unauthorized");
+    error.statusCode = 403;
+    error.code = "tn_unauthorized";
+    throw error;
+  }
+
+  if (response.status === 404) {
+    const error = new Error("Tienda Nube order not found");
+    error.statusCode = 404;
+    error.code = "tn_not_found";
+    throw error;
+  }
+
+  if (!response.ok) {
+    const error = new Error(`Tienda Nube request failed with status ${response.status}`);
+    error.statusCode = 500;
+    error.code = "tn_request_failed";
+    throw error;
+  }
+
+  return response.json();
+}
+
 module.exports = {
-  fetchProducts
+  fetchProducts,
+  fetchOrder
 };
