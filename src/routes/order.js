@@ -1,11 +1,49 @@
 const express = require("express");
+codex/implement-get-/order-endpoint-yscaa9
+const { fetchOrderById, fetchOrderByNumber } = require("../services/tiendanube");
+
 const { fetchOrder } = require("../services/tiendanube");
+main
 
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
     const orderId = req.query.id;
+codex/implement-get-/order-endpoint-yscaa9
+    const orderNumber = req.query.number;
+    const email = req.query.email;
+
+    if (!orderId && !orderNumber) {
+      return res.status(400).json({
+        ok: false,
+        error: {
+          code: "missing_id_or_number",
+          message: "Query parameter 'id' or 'number' is required"
+        }
+      });
+    }
+
+    let order = null;
+
+    if (orderId) {
+      order = await fetchOrderById(orderId);
+    } else {
+      order = await fetchOrderByNumber({ number: orderNumber, email });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      order: {
+        id: order.id,
+        number: order.number,
+        status: order.status,
+        created_at: order.created_at,
+        total: order.total,
+        shipping_tracking_number: order.shipping_tracking_number || null,
+        shipping_tracking_url: order.shipping_tracking_url || null
+      }
+
 
     if (!orderId) {
       return res.status(400).json({
@@ -22,6 +60,7 @@ router.get("/", async (req, res, next) => {
     return res.status(200).json({
       ok: true,
       order
+ main
     });
   } catch (error) {
     return next(error);

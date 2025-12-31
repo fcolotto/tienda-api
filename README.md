@@ -94,3 +94,26 @@ Errores comunes:
 - Sin `x-api-key` o incorrecta → `401`.
 - Sin `q` → `400`.
 - Error con Tienda Nube → `500` o `502`.
+
+### Consultar pedidos
+
+Por número de pedido:
+
+```bash
+curl "http://localhost:3000/order?number=5273" \
+  -H "x-api-key: TU_API_KEY"
+```
+
+Por email y número:
+
+```bash
+curl "http://localhost:3000/order?email=cliente@dominio.com&number=5273" \
+  -H "x-api-key: TU_API_KEY"
+```
+
+Por ID interno (fallback):
+
+```bash
+curl "http://localhost:3000/order?id=123456" \
+  -H "x-api-key: TU_API_KEY"
+```
