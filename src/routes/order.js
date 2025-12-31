@@ -1,11 +1,16 @@
 const express = require("express");
+codex/implement-get-/order-endpoint-yscaa9
 const { fetchOrderById, fetchOrderByNumber } = require("../services/tiendanube");
+
+const { fetchOrder } = require("../services/tiendanube");
+main
 
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
     const orderId = req.query.id;
+codex/implement-get-/order-endpoint-yscaa9
     const orderNumber = req.query.number;
     const email = req.query.email;
 
@@ -38,6 +43,24 @@ router.get("/", async (req, res, next) => {
         shipping_tracking_number: order.shipping_tracking_number || null,
         shipping_tracking_url: order.shipping_tracking_url || null
       }
+
+
+    if (!orderId) {
+      return res.status(400).json({
+        ok: false,
+        error: {
+          code: "missing_id",
+          message: "Query parameter 'id' is required"
+        }
+      });
+    }
+
+    const order = await fetchOrder(orderId);
+
+    return res.status(200).json({
+      ok: true,
+      order
+ main
     });
   } catch (error) {
     return next(error);

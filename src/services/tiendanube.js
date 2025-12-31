@@ -36,8 +36,23 @@ async function fetchProducts() {
   return response.json();
 }
 
+codex/implement-get-/order-endpoint-yscaa9
 async function fetchOrderById(orderId) {
   const { storeId, accessToken, userAgent } = getCredentials();
+
+async function fetchOrder(orderId) {
+  const storeId = process.env.TN_STORE_ID;
+  const accessToken = process.env.TN_ACCESS_TOKEN;
+  const userAgent = process.env.TN_USER_AGENT;
+
+  if (!storeId || !accessToken || !userAgent) {
+    const error = new Error("Tienda Nube credentials are not configured");
+    error.statusCode = 500;
+    error.code = "tn_not_configured";
+    throw error;
+  }
+
+main
   const encodedId = encodeURIComponent(orderId);
   const url = `${BASE_URL}/${storeId}/orders/${encodedId}`;
 
@@ -72,6 +87,7 @@ async function fetchOrderById(orderId) {
   return response.json();
 }
 
+codex/implement-get-/order-endpoint-yscaa9
 function buildNotFoundError() {
   const error = new Error("Tienda Nube order not found");
   error.statusCode = 404;
@@ -142,4 +158,9 @@ module.exports = {
   fetchOrderById,
   fetchOrders,
   fetchOrderByNumber
+
+module.exports = {
+  fetchProducts,
+  fetchOrder
+main
 };
