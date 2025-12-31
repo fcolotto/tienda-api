@@ -1,5 +1,5 @@
 const express = require("express");
-const { fetchOrderById, fetchOrders } = require("../services/tiendanube");
+const { fetchOrderById, fetchOrderByNumber } = require("../services/tiendanube");
 
 const router = express.Router();
 
@@ -13,8 +13,8 @@ router.get("/", async (req, res, next) => {
       return res.status(400).json({
         ok: false,
         error: {
-          code: "missing_number",
-          message: "Query parameter 'number' is required"
+          code: "missing_id_or_number",
+          message: "Query parameter 'id' or 'number' is required"
         }
       });
     }
@@ -24,24 +24,7 @@ router.get("/", async (req, res, next) => {
     if (orderId) {
       order = await fetchOrderById(orderId);
     } else {
-      const orders = await fetchOrders({ email });
-      const normalizedNumber = String(orderNumber);
-      const emailFilter = email ? String(email).toLowerCase() : null;
-      const filteredOrders = emailFilter
-        ? orders.filter((item) => String(item.customer?.email || "").toLowerCase() === emailFilter)
-        : orders;
-
-      order = filteredOrders.find((item) => String(item.number) === normalizedNumber) || null;
-    }
-
-    if (!order) {
-      return res.status(404).json({
-        ok: false,
-        error: {
-          code: "tn_not_found",
-          message: "Order not found"
-        }
-      });
+      order = await fetchOrderByNumber({ number: orderNumber, email });
     }
 
     return res.status(200).json({

@@ -72,6 +72,13 @@ async function fetchOrderById(orderId) {
   return response.json();
 }
 
+function buildNotFoundError() {
+  const error = new Error("Tienda Nube order not found");
+  error.statusCode = 404;
+  error.code = "tn_not_found";
+  return error;
+}
+
 async function fetchOrders({ email, perPage = 100 } = {}) {
   const { storeId, accessToken, userAgent } = getCredentials();
   const params = new URLSearchParams();
@@ -110,8 +117,29 @@ async function fetchOrders({ email, perPage = 100 } = {}) {
   return response.json();
 }
 
+async function fetchOrderByNumber({ number, email }) {
+  const orders = await fetchOrders({ email, perPage: 100 });
+  const normalizedNumber = String(number);
+  const emailFilter = email ? String(email).toLowerCase() : null;
+  const filteredOrders = emailFilter
+    ? orders.filter((item) => String(item.customer?.email || "").toLowerCase() === emailFilter)
+    : orders;
+
+  const match = filteredOrders.find((item) => {
+    const orderNumber = item.number ?? item.order_number;
+    return String(orderNumber) === normalizedNumber;
+  });
+
+  if (!match) {
+    throw buildNotFoundError();
+  }
+
+  return match;
+}
+
 module.exports = {
   fetchProducts,
   fetchOrderById,
-  fetchOrders
+  fetchOrders,
+  fetchOrderByNumber
 };
