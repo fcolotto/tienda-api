@@ -13,7 +13,7 @@ router.get("/", async (req, res, next) => {
       return res.status(400).json({
         ok: false,
         error: {
-          code: "missing_id",
+          code: "missing_id_or_number",
           message: "Query parameter 'id' or 'number' is required"
         }
       });
@@ -31,7 +31,7 @@ router.get("/", async (req, res, next) => {
       ok: true,
       order: {
         id: order.id,
-        number: order.number,
+        number: order.number ?? order.order_number ?? null,
         status: order.status,
         created_at: order.created_at,
         total: order.total,
