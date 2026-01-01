@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const productRouter = require("./routes/product");
-const authMiddleware = require("./middleware/auth");
+const orderRouter = require("./routes/order");
 
 const app = express();
 
@@ -19,8 +19,8 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ ok: true });
 });
 
-app.use(authMiddleware);
 app.use("/product", productRouter);
+app.use("/order", orderRouter);
 
 app.use((err, _req, res, _next) => {
   console.error("[error]", err);
