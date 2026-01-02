@@ -6,7 +6,8 @@ const orderRouter = require("./routes/order");
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+// Railway asigna un puerto dinámico en process.env.PORT
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 
@@ -18,6 +19,10 @@ app.use((req, _res, next) => {
 app.get("/health", (_req, res) => {
   res.status(200).json({ ok: true });
 });
+
+// Si tenés authMiddleware en tu proyecto, descomentá estas dos líneas:
+// const authMiddleware = require("./middleware/auth");
+// app.use(authMiddleware);
 
 app.use("/product", productRouter);
 app.use("/order", orderRouter);
@@ -37,6 +42,8 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-app.listen(PORT, () => {
+// IMPORTANTE: bind a 0.0.0.0 para que Railway pueda enrutar al contenedor
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`[startup] Server listening on port ${PORT}`);
 });
+
