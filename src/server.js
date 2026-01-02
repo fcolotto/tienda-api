@@ -8,7 +8,11 @@ const authMiddleware = require("./middleware/auth");
 const app = express();
 
 // Railway asigna un puerto dinámico en process.env.PORT
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT);
+
+if (!PORT) {
+  throw new Error("PORT env var is required in production");
+}
 
 app.use(express.json());
 
