@@ -7,7 +7,8 @@ const authMiddleware = require("./middleware/auth");
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+// Railway asigna un puerto dinámico en process.env.PORT
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 
@@ -39,6 +40,7 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-app.listen(PORT, () => {
+// IMPORTANTE: bind a 0.0.0.0 para que el contenedor sea accesible desde afuera (Railway)
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`[startup] Server listening on port ${PORT}`);
 });
